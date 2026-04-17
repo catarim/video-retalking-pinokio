@@ -1,13 +1,13 @@
 module.exports = {
   run: [
-    // Etapa 1: Clonar o repositório
+    // Etapa 1: Clonar
     {
       method: "shell.run",
       params: {
         message: "git clone https://github.com/OpenTalker/video-retalking app"
       }
     },
-    // Etapa 2: Instanciar o Ambiente Virtual
+    // Etapa 2: Criar Ambiente Virtual
     {
       method: "shell.run",
       params: {
@@ -15,20 +15,19 @@ module.exports = {
         message: "python -m venv env"
       }
     },
-    // Etapa 3: Instalar as ferramentas de construção ANTES das dependências
+    // Etapa 3: O GRANDE TRUQUE - Instalar o dlib pré-compilado direto do link, sem compilar nada!
     {
       method: "shell.run",
       params: {
         path: "app",
         venv: "env",
         message: [
-          "python -m pip install --upgrade pip setuptools wheel",
-          "pip install cmake",
-          "pip install dlib==19.24.0"
+          "python -m pip install --upgrade pip",
+          "pip install https://github.com/sachinprasanth/dlib-windows/releases/download/v19.24.0/dlib-19.24.0-cp310-cp310-win_amd64.whl"
         ]
       }
     },
-    // Etapa 4: Instalar o resto do projeto e o PyTorch para NVIDIA
+    // Etapa 4: Instalar as placas NVIDIA e o resto
     {
       method: "shell.run",
       params: {
@@ -40,7 +39,7 @@ module.exports = {
         ]
       }
     },
-    // Etapa 5: Hotfix para o bug nativo do projeto (correção do torchvision)
+    // Etapa 5: Hotfix do basicsr (bug nativo do projeto)
     {
       method: "shell.run",
       params: {
@@ -49,7 +48,7 @@ module.exports = {
         message: "python -c \"import os; import basicsr; p = os.path.join(os.path.dirname(basicsr.__file__), 'data', 'degradations.py'); code=open(p).read().replace('from torchvision.transforms.functional_tensor import rgb_to_grayscale', 'from torchvision.transforms.functional import rgb_to_grayscale'); open(p,'w').write(code)\""
       }
     },
-    // Etapa 6: Criar pasta e baixar os pesados modelos pré-treinados
+    // Etapa 6: Baixar Modelos
     {
       method: "shell.run",
       params: {
