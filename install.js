@@ -1,13 +1,13 @@
 module.exports = {
   run: [
-    // Etapa 1: Clonar o repositório-base
+    // Etapa 1: Clonar o repositório
     {
       method: "shell.run",
       params: {
         message: "git clone https://github.com/OpenTalker/video-retalking app"
       }
     },
-    // Etapa 2: Instanciar o Ambiente Virtual (VENV) na raiz do projeto
+    // Etapa 2: Instanciar o Ambiente Virtual
     {
       method: "shell.run",
       params: {
@@ -15,20 +15,32 @@ module.exports = {
         message: "python -m venv env"
       }
     },
-    // Etapa 3: Instalar as dependências forçando o contexto do VENV
+    // Etapa 3: Instalar as ferramentas de construção ANTES das dependências
     {
       method: "shell.run",
       params: {
         path: "app",
         venv: "env",
         message: [
-          "python -m pip install --upgrade pip",
+          "python -m pip install --upgrade pip setuptools wheel",
+          "pip install cmake",
+          "pip install dlib==19.24.0"
+        ]
+      }
+    },
+    // Etapa 4: Instalar o resto do projeto e o PyTorch para NVIDIA
+    {
+      method: "shell.run",
+      params: {
+        path: "app",
+        venv: "env",
+        message: [
           "pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118",
           "pip install -r requirements.txt"
         ]
       }
     },
-    // Etapa 4: Hotfix para o bug de versão do torchvision na biblioteca basicsr
+    // Etapa 5: Hotfix para o bug nativo do projeto (correção do torchvision)
     {
       method: "shell.run",
       params: {
@@ -37,7 +49,7 @@ module.exports = {
         message: "python -c \"import os; import basicsr; p = os.path.join(os.path.dirname(basicsr.__file__), 'data', 'degradations.py'); code=open(p).read().replace('from torchvision.transforms.functional_tensor import rgb_to_grayscale', 'from torchvision.transforms.functional import rgb_to_grayscale'); open(p,'w').write(code)\""
       }
     },
-    // Etapa 5: Estruturação dos Checkpoints e Download em Lote (Direct Release Links)
+    // Etapa 6: Criar pasta e baixar os pesados modelos pré-treinados
     {
       method: "shell.run",
       params: {
