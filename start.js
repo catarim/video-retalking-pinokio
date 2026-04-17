@@ -3,8 +3,9 @@ module.exports = {
     {
       method: "shell.run",
       params: {
-        message: "python run.py",
         path: "app",
+        venv: "env",
+        message: "python webUI.py",
         on: [{ "event": "/http://[0-9.]+:([0-9]+)/", "done": true }]
       }
     },
