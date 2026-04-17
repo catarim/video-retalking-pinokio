@@ -1,13 +1,14 @@
 module.exports = {
+  version: "1.0",
   title: "Video-Retalking UHQ",
-  description: "Lip-sync de alta qualidade com restauração facial automática (GFPGAN).",
+  description: "Instalador Robusto - Lip-Sync Avançado (OpenTalker)",
   icon: "icon.png",
   menu: async (kernel) => {
-    let installing = await kernel.exists(__dirname, "app", "env")
-    if (installing) {
+    let installed = await kernel.exists(__dirname, "app", "env")
+    if (installed) {
       return [
-        { icon: "fa-solid fa-play", text: "Launch", href: "start.js" },
-        { icon: "fa-solid fa-plug", text: "Update", href: "install.js" }
+        { icon: "fa-solid fa-play", text: "Launch WebUI", href: "start.js" },
+        { icon: "fa-solid fa-terminal", text: "Update", href: "install.js" }
       ]
     } else {
       return [{ icon: "fa-solid fa-download", text: "Install", href: "install.js" }]
